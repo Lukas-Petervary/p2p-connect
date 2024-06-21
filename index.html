@@ -23,7 +23,6 @@
 </head>
     <body>
         <h1>P2P Messaging with PeerJS</h1>
-        <h2>Your IP Address is: <span id="ip-address">Loading...</span></h2>
         <h2>Your connection ID is: <span id="connection-id">Loading...</span></h2>
         <div>
             <label for="peer-id-input">Enter peer ID:</label>
@@ -34,39 +33,6 @@
         <button id="send-btn">Send</button>
 
         <script>
-            const ip_to_hex = (ipv4) => {
-                const octets = ipv4.split('.').map(Number);
-                const hexParts = octets.map(octet => octet.toString(16).padStart(2, '0'));
-
-                return hexParts.join('');
-            }
-
-            const hex_to_ip = (hexHash) => {
-                const octets = [];
-                for (let i = 0; i < hexHash.length; i += 2) {
-                    const part = hexHash.slice(i, i + 2);
-                    octets.push(parseInt(part, 16));
-                }
-                return octets.join('.');
-            }
-
-            let ipv4 = null;
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => {
-                    ipv4 = data.ip;
-                })
-                .catch(error => {
-                    console.error('Error fetching IP address:', error);
-                    document.getElementById('ip-address').textContent = 'Unable to fetch IP address';
-                }).finally(() => {
-                document.getElementById('ip-address').textContent = ipv4 + " => " + ip_to_hex(ipv4);
-            });
-
-
-            /*##################################
-            #            WEBRTC CODE           #
-            ##################################*/
             // Check if Peer ID is already stored in local storage
             let peerId = localStorage.getItem('peerId');
 
