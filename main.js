@@ -33,12 +33,12 @@ fetch('https://api.ipify.org?format=json')
 ##################################*/
 const peer = new Peer(); // No need to specify an ID, PeerJS will generate one
 
-peer.on('open', function(id) {
-    document.getElementById('connect-id').textContent = id;
-    console.log('My peer ID is: ' + id);
-});
-
 let conn = null;
+
+peer.on('open', function(id) {
+    console.log('My peer ID is: ' + id);
+    document.getElementById('connection-id').textContent = id; // Display connection ID
+});
 
 peer.on('connection', function(connection) {
     console.log('Incoming connection from ' + connection.peer);
@@ -55,7 +55,7 @@ peer.on('connection', function(connection) {
 });
 
 document.getElementById('send-btn').addEventListener('click', function() {
-    const message = document.getElementById('message').value;
+    const message = document.getElementById('message').value.trim();
     document.getElementById('message').value = '';
 
     if (!conn) {
