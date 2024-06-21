@@ -21,7 +21,7 @@ export default class MessageService {
     }
 
     handleConnectButton(peerManager) {
-        document.getElementById('connect-btn').addEventListener('click', () => {
+        document.getElementById('send-btn').addEventListener('click', () => {
             const destPeerId = document.getElementById('peer-id-input').value.trim();
             if (destPeerId) {
                 peerManager.connectToPeer(destPeerId, {
