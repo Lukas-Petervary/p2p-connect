@@ -2,31 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>P2P Simple</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Messaging with PeerJS</title>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.3.2/dist/peerjs.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin-top: 20%;
+            margin-top: 20px;
         }
-        textarea, input, button {
-            display: block;
-            margin: 10px auto;
+        #messages {
+            width: 80%;
+            height: 300px;
+            margin: 20px auto;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
         }
     </style>
 </head>
-<body>
-    <h1>P2P Connection Demo</h1>
-    <h2>Your IP Address is: <span id="ip-address">Loading...</span></h2>
-    <textarea id="offer" placeholder="Paste offer here"></textarea>
-    <button id="create-offer">Create Offer</button>
-    <textarea id="answer" placeholder="Paste answer here"></textarea>
-    <button id="create-answer">Create Answer</button>
-    <button id="set-answer">Set Answer</button>
-    <input type="text" id="message" placeholder="Enter message">
-    <button id="send-msg">Send Message</button>
+    <body>
+        <h1>P2P Messaging with PeerJS</h1>
+        <h2>Your IP Address is: <span id="ip-address">Loading...</span></h2>
+        <h2>Your connection ID is: <span id="connect-id">Loading...</span></h2>
+        <div>
+            <label for="peer-id-input">Enter peer ID:</label>
+            <input type="text" id="peer-id-input" placeholder="Paste peer ID">
+        </div>
+        <div id="messages"></div>
+        <textarea id="message" placeholder="Type your message"></textarea><br>
+        <button id="send-btn">Send</button>
 
-    <script src="main.js"></script>
-</body>
+        <script src="main.js"></script>
+    </body>
 </html>

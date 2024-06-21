@@ -31,56 +31,53 @@ fetch('https://api.ipify.org?format=json')
 /*##################################
 #            WEBRTC CODE           #
 ##################################*/
-let peerConnection;
-let dataChannel;
+const peer = new Peer(); // No need to specify an ID, PeerJS will generate one
 
-document.getElementById('create-offer').addEventListener('click', async () => {
-    peerConnection = new RTCPeerConnection();
-
-    dataChannel = peerConnection.createDataChannel('chat');
-    dataChannel.onopen = () => console.log('Data channel is open');
-    dataChannel.onmessage = (event) => alert('Message received: ' + event.data);
-
-    peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-            // ICE candidate generated
-        }
-    };
-
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
-
-    document.getElementById('offer').value = JSON.stringify(peerConnection.localDescription);
+peer.on('open', function(id) {
+    document.getElementById('connect-id').textContent = id;
+    console.log('My peer ID is: ' + id);
 });
 
-document.getElementById('create-answer').addEventListener('click', async () => {
-    const offer = JSON.parse(document.getElementById('offer').value);
-    peerConnection = new RTCPeerConnection();
+let conn = null;
 
-    peerConnection.ondatachannel = (event) => {
-        dataChannel = event.channel;
-        dataChannel.onmessage = (event) => alert('Message received: ' + event.data);
-    };
+peer.on('connection', function(connection) {
+    console.log('Incoming connection from ' + connection.peer);
+    conn = connection;
 
-    peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-            // ICE candidate generated
-        }
-    };
+    conn.on('data', function(data) {
+        appendMessage('Received: ' + data);
+    });
 
-    await peerConnection.setRemoteDescription(offer);
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
-
-    document.getElementById('answer').value = JSON.stringify(peerConnection.localDescription);
+    conn.on('close', function() {
+        console.log('Connection with ' + conn.peer + ' closed');
+        conn = null;
+    });
 });
 
-document.getElementById('set-answer').addEventListener('click', async () => {
-    const answer = JSON.parse(document.getElementById('answer').value);
-    await peerConnection.setRemoteDescription(answer);
-});
-
-document.getElementById('send-msg').addEventListener('click', () => {
+document.getElementById('send-btn').addEventListener('click', function() {
     const message = document.getElementById('message').value;
-    dataChannel.send(message);
+    document.getElementById('message').value = '';
+
+    if (!conn) {
+        const destPeerId = document.getElementById('peer-id-input').value.trim();
+        if (!destPeerId) {
+            alert('Enter destination peer ID');
+            return;
+        }
+
+        conn = peer.connect(destPeerId);
+        conn.on('open', function() {
+            conn.send(message);
+            appendMessage('Sent: ' + message);
+        });
+    } else {
+        conn.send(message);
+        appendMessage('Sent: ' + message);
+    }
 });
+
+function appendMessage(message) {
+    const messageElem = document.createElement('div');
+    messageElem.textContent = message;
+    document.getElementById('messages').appendChild(messageElem);
+}
