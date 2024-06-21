@@ -1,86 +1,62 @@
-const ip_to_hex = (ipv4) => {
-    const octets = ipv4.split('.').map(Number);
-    const hexParts = octets.map(octet => octet.toString(16).padStart(2, '0'));
+import { Peer } from "https://esm.sh/peerjs@1.5.4?bundle-deps";
 
-    return hexParts.join('');
-}
+const peer = new Peer(); // Create a new Peer instance
 
-const hex_to_ip = (hexHash) => {
-    const octets = [];
-    for (let i = 0; i < hexHash.length; i += 2) {
-        const part = hexHash.slice(i, i + 2);
-        octets.push(parseInt(part, 16));
+// Display the generated Peer ID (Friend Code) in the HTML
+peer.on('open', (id) => {
+    document.getElementById('ip-address').textContent = id;
+});
+
+// Handle errors when attempting to generate Peer ID
+peer.on('error', (err) => {
+    console.error('PeerJS error:', err);
+    alert('PeerJS encountered an error. Please check console for details.');
+});
+
+document.getElementById('create-answer').addEventListener('click', () => {
+    const friendId = document.getElementById('answer').value.trim();
+    if (friendId === '') {
+        alert('Please enter a valid friend ID to connect.');
+        return;
     }
-    return octets.join('.');
+    
+    const conn = peer.connect(friendId);
+    setupDataChannel(conn); // Setup data channel for sending messages
+});
+
+function setupDataChannel(conn) {
+    conn.on('open', () => {
+        console.log('Connection established');
+        conn.on('data', (data) => {
+            console.log('Received:', data);
+        });
+
+        // Send messages
+        document.getElementById('send-msg').addEventListener('click', () => {
+            const message = document.getElementById('message').value;
+            conn.send(message); // Send message over the data connection
+        });
+    });
+
+    conn.on('error', (err) => {
+        console.error('Connection error:', err);
+        alert('Connection error. Please check console for details.');
+    });
 }
 
-let ipv4 = null;
-fetch('https://api.ipify.org?format=json')
-    .then(response => response.json())
-    .then(data => {
-        ipv4 = data.ip;
-    })
-    .catch(error => {
-        console.error('Error fetching IP address:', error);
-        document.getElementById('ip-address').textContent = 'Unable to fetch IP address';
-    }).finally(() => {
-    document.getElementById('ip-address').textContent = ipv4 + " => " + ip_to_hex(ipv4);
-});
-
-
-/*##################################
-#            WEBRTC CODE           #
-##################################*/
-let peerConnection;
-let dataChannel;
-
-document.getElementById('create-offer').addEventListener('click', async () => {
-    peerConnection = new RTCPeerConnection();
-
-    dataChannel = peerConnection.createDataChannel('chat');
-    dataChannel.onopen = () => console.log('Data channel is open');
-    dataChannel.onmessage = (event) => alert('Message received: ' + event.data);
-
-    peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-            // ICE candidate generated
-        }
-    };
-
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
-
-    document.getElementById('offer').value = JSON.stringify(peerConnection.localDescription);
-});
-
-document.getElementById('create-answer').addEventListener('click', async () => {
-    const offer = JSON.parse(document.getElementById('offer').value);
-    peerConnection = new RTCPeerConnection();
-
-    peerConnection.ondatachannel = (event) => {
-        dataChannel = event.channel;
-        dataChannel.onmessage = (event) => alert('Message received: ' + event.data);
-    };
-
-    peerConnection.onicecandidate = (event) => {
-        if (event.candidate) {
-            // ICE candidate generated
-        }
-    };
-
-    await peerConnection.setRemoteDescription(offer);
-    const answer = await peerConnection.createAnswer();
-    await peerConnection.setLocalDescription(answer);
-
-    document.getElementById('answer').value = JSON.stringify(peerConnection.localDescription);
-});
+// Initialize peerConnection as an RTCPeerConnection instance
+const peerConnection = new RTCPeerConnection();
 
 document.getElementById('set-answer').addEventListener('click', async () => {
-    const answer = JSON.parse(document.getElementById('answer').value);
-    await peerConnection.setRemoteDescription(answer);
-});
-
-document.getElementById('send-msg').addEventListener('click', () => {
-    const message = document.getElementById('message').value;
-    dataChannel.send(message);
+    try {
+        const sdpAnswer = document.getElementById('answer').value.trim(); // Assuming 'answer' is directly usable as SDP
+        const sessionDescription = {
+            type: 'answer',
+            sdp: sdpAnswer
+        };
+        await peerConnection.setRemoteDescription(sessionDescription); // Use 'sessionDescription' directly
+    } catch (error) {
+        console.error('Error setting remote description:', error);
+        alert('Error setting remote description. Please check console for details.');
+    }
 });

@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>P2P Simple</title>
-    <script type="module">
-        import {Peer} from "https://esm.sh/peerjs@1.5.4?bundle-deps"
-    </script>
+    <script type="module" src="main.js"></script>
+
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -37,14 +38,10 @@
 <body>
     <h1>P2P Connection Demo</h1>
     <h2>Your Freind Code is: <span id="ip-address">Loading...</span></h2>
-    <textarea id="offer" placeholder="Paste offer here"></textarea>
-    <button id="create-offer">Create Offer</button>
     <textarea id="answer" placeholder="Paste answer here"></textarea>
     <button id="create-answer">Create Answer</button>
     <button id="set-answer">Set Answer</button>
     <input type="text" id="message" placeholder="Enter message">
     <button id="send-msg">Send Message</button>
-
-    <script src="main.js"></script>
 </body>
 </html>
