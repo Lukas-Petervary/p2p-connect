@@ -67,6 +67,7 @@
             /*##################################
             #            WEBRTC CODE           #
             ##################################*/
+            // Check if Peer ID is already stored in local storage
             let peerId = localStorage.getItem('peerId');
 
             if (!peerId) {
@@ -102,7 +103,7 @@
                 const message = document.getElementById('message').value.trim();
                 document.getElementById('message').value = '';
 
-                if (!conn) {
+                if (!conn || !conn.open) {
                     const destPeerId = document.getElementById('peer-id-input').value.trim();
                     if (!destPeerId) {
                         alert('Enter destination peer ID');
@@ -113,6 +114,9 @@
                     conn.on('open', function() {
                         conn.send(message);
                         appendMessage('Sent: ' + message);
+                    });
+                    conn.on('data', function(data) {
+                        appendMessage('Received: ' + data);
                     });
                 } else {
                     conn.send(message);
