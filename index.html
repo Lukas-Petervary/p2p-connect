@@ -112,14 +112,14 @@
 
                     conn = peer.connect(destPeerId);
                     conn.on('open', function() {
-                        conn.send(message);
+                        conn.send(peerId + ': ' + message);
                         appendMessage('Sent: ' + message);
                     });
                     conn.on('data', function(data) {
-                        appendMessage('Received: ' + data);
+                        appendMessage(data);
                     });
                 } else {
-                    conn.send(message);
+                    conn.send(peerId + ': ' + message);
                     appendMessage('Sent: ' + message);
                 }
             });
