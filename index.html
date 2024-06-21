@@ -67,7 +67,15 @@
             /*##################################
             #            WEBRTC CODE           #
             ##################################*/
-            const peer = new Peer(); // No need to specify an ID, PeerJS will generate one
+            let peerId = localStorage.getItem('peerId');
+
+            if (!peerId) {
+                // Generate a new Peer ID if not already stored
+                peerId = Math.random().toString(36).substring(7); // Generate a random ID (example)
+                localStorage.setItem('peerId', peerId); // Store the Peer ID in local storage
+            }
+
+            const peer = new Peer(peerId); // Use the stored Peer ID
 
             let conn = null;
 
