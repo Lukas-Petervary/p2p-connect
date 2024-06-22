@@ -2,9 +2,7 @@ import PeerManager from './src/networking/PeerManager.js';
 
 const peerManager = new PeerManager();
 
-peerManager.initialize({
-    onData: data => appendMessage('Received: ' + data)
-});
+peerManager.initialize();
 
 document.getElementById('send-btn').addEventListener('click', () => {
     const message = document.getElementById('message').value.trim();
