@@ -32,13 +32,20 @@ export default class PeerManager {
         connection.on('open', () => {
             console.log('Connected to ' + peerId);
             this.addConnection(connection, callbacks);
+            this.sendHandshake(connection);
         });
     }
 
     addConnection(connection, { onData }) {
         this.connections.set(connection.peer, connection);
         connection.on('data', data => {
-            if (onData) onData(data);
+            const parsedData = JSON.parse(data);
+            if (parsedData.type === 'handshake') {
+                console.log('Handshake received from ' + connection.peer);
+                this.handleHandshake(parsedData.peerId, connection.peer);
+            } else if (parsedData.type === 'message') {
+                if (onData) onData(parsedData.message);
+            }
         });
 
         connection.on('close', () => {
@@ -47,10 +54,32 @@ export default class PeerManager {
         });
     }
 
+    sendHandshake(connection) {
+        const handshakePacket = JSON.stringify({ type: 'handshake', peerId: this.peerId });
+        connection.send(handshakePacket);
+    }
+
+    handleHandshake(peerId, fromPeerId) {
+        if (!this.connections.has(peerId) && peerId !== this.peerId) {
+            console.log('Connecting to new peer from handshake: ' + peerId);
+            this.connectToPeer(peerId, {
+                onData: data => appendMessage(data)
+            });
+        }
+        // Forward the handshake to other connections except the sender and the new peer
+        this.connections.forEach((conn, id) => {
+            if (id !== fromPeerId && id !== peerId) {
+                const handshakePacket = JSON.stringify({ type: 'handshake', peerId });
+                conn.send(handshakePacket);
+            }
+        });
+    }
+
     sendMessage(message) {
+        const messagePacket = JSON.stringify({ type: 'message', message: this.peerId+': '+message });
         this.connections.forEach(conn => {
             if (conn.open) {
-                conn.send(message);
+                conn.send(messagePacket);
             }
         });
     }

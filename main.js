@@ -19,7 +19,7 @@ document.getElementById('connect-btn').addEventListener('click', () => {
     const destPeerId = document.getElementById('peer-id-input').value.trim();
     if (destPeerId) {
         peerManager.connectToPeer(destPeerId, {
-            onData: data => appendMessage('Received: ' + data)
+            onData: data => appendMessage(data)
         });
     } else {
         alert('Enter destination peer ID');
