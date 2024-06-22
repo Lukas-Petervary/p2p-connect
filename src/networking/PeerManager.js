@@ -8,9 +8,17 @@ export default class PeerManager {
         this.connections = new Map(); // Store connections as a map
         this.packetRegistry = new PacketRegistry(); // Initialize packet registry
 
-        this.packetRegistry.registerPacket('handshake', this.handleHandshake.bind(this));
-        this.packetRegistry.registerPacket('message', this.handleMessage.bind(this));
-        this.packetRegistry.registerPacket('alert', this.handleAlert.bind(this));
+        this.packetRegistry.registerPacket('handshake', HandshakePacket.handleHandshake.bind(this));
+        this.packetRegistry.registerPacket('message', MessagePacket.handleMessage.bind(this));
+        this.packetRegistry.registerPacket('alert', AlertPacket.handleAlert.bind(this));
+    }
+
+    static getInstance() {
+        return this;
+    }
+
+    static printConnections() {
+        console.log([...this.connections.keys()]);
     }
 
     generatePeerId() {
@@ -85,31 +93,5 @@ export default class PeerManager {
                 conn.send(jsonPacket);
             }
         });
-    }
-
-    handleHandshake(packet, fromPeerId) {
-        const peerId = packet.peerId;
-        console.log('Handshake from peerID: "'+fromPeerId+'"');
-
-        // if connection map does not contain received handshake
-        if (!this.connections.has(peerId) && peerId !== this.peerId) {
-            console.log('Connecting to new peer from handshake: ' + peerId);
-            this.connectToPeer(peerId);
-            this.broadcastPacket(packet);
-        }
-
-    }
-
-    handleMessage(packet) {
-        const message = packet.message;
-
-        const messagesDiv = document.getElementById('messages');
-        const messageElem = document.createElement('div');
-        messageElem.textContent = message;
-        messagesDiv.appendChild(messageElem);
-    }
-
-    handleAlert(packet) {
-        alert(packet.message);
     }
 }

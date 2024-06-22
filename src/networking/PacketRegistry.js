@@ -1,3 +1,7 @@
+import PeerManager from "./PeerManager.js";
+
+const network = PeerManager.getInstance();
+
 class PacketRegistry {
     constructor() {
         this.packetHandlers = new Map();
@@ -28,7 +32,16 @@ class HandshakePacket {
         return new HandshakePacket(data.peerId);
     }
 
-    static handleHandshake(packet) {
+    static handleHandshake(packet, fromPeerId) {
+        const peerId = packet.peerId;
+        console.log('Handshake from peerID: "'+fromPeerId+'"');
+
+        // if connection map does not contain received handshake
+        if (!network.connections.has(peerId) && peerId !== network.peerId) {
+            console.log('Connecting to new peer from handshake: ' + peerId);
+            network.connectToPeer(peerId);
+            network.broadcastPacket(packet);
+        }
 
     }
 }
@@ -42,6 +55,15 @@ class MessagePacket {
     static fromJSON(data) {
         return new MessagePacket(data.message);
     }
+
+    static handleMessage(packet) {
+        const message = packet.message;
+
+        const messagesDiv = document.getElementById('messages');
+        const messageElem = document.createElement('div');
+        messageElem.textContent = message;
+        messagesDiv.appendChild(messageElem);
+    }
 }
 
 class AlertPacket {
@@ -52,6 +74,10 @@ class AlertPacket {
 
     static fromJSON(data) {
         return new AlertPacket(data.message);
+    }
+
+    static handleAlert(packet) {
+        alert(packet.message);
     }
 }
 
