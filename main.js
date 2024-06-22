@@ -10,8 +10,12 @@ document.getElementById('send-btn').addEventListener('click', () => {
     const message = document.getElementById('message').value.trim();
     document.getElementById('message').value = '';
     if (message) {
-        peerManager.sendMessage(message);
-        appendMessage('Sent: ' + message);
+        if (message.startsWith('§')) {
+            peerManager.sendAlert(message.substring(1));
+        } else {
+            peerManager.sendMessage(message);
+            appendMessage('Sent: ' + message);
+        }
     }
 });
 
