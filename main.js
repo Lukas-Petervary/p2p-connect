@@ -14,11 +14,6 @@ document.getElementById('send-btn').addEventListener('click', () => {
             appendMessage('Sent: ' + message);
         }
     }
-    let tf = true;
-    while(tf){
-        console.log("ERROR");
-    }
-
 });
 
 document.getElementById('connect-btn').addEventListener('click', () => {
