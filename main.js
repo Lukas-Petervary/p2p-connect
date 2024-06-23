@@ -1,4 +1,4 @@
-import PeerManager from './src/PeerManager.js';
+import PeerManager from './src/networking/PeerManager.js';
 
 const peerManager = new PeerManager();
 

@@ -1,6 +1,4 @@
-import PeerManager from "./PeerManager.js";
-
-class PacketRegistry {
+export class PacketRegistry {
     constructor() {
         this.packetHandlers = new Map();
     }
@@ -19,5 +17,3 @@ class PacketRegistry {
         }
     }
 }
-
-export { PacketRegistry };
