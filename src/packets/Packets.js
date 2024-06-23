@@ -23,23 +23,28 @@ class HandshakePacket extends GenericPacket {
 
     static handleHandshake(packet, fromPeerId) {
         const network = PeerManager.getInstance();
-        console.log(`Handshake inbound from "${fromPeerId}":\n${JSON.stringify(packet)}\nCurrent handshakes: [${handshakeList}]`);
+        console.log(`Handshake inbound from "${fromPeerId}":\n${JSON.stringify(packet)}`);
 
         const sender = packet.peerId;
         // if ID is not previously handshaked
         if (!handshakeList.includes(sender)) {
             handshakeList.push(sender);
-            console.log(`Connecting from handshake "${fromPeerId}"`);
+            console.log(`Connecting from handshake "${fromPeerId}\nCurrent handshakes: [${handshakeList}]"`);
             network.connectToPeer(sender);
 
-            const jsonPacket = JSON.stringify(packet);
-            this.connections.forEach(conn => {
-                console.log(`Broadcasting handshake to "${conn.peer}":\n${jsonPacket}`);
-                if (conn.open) {
-                    conn.send(jsonPacket);
-                }
-            });
+            // only propagate handshake if from initial sender
+            if (fromPeerId === sender) {
+                const jsonPacket = JSON.stringify(packet);
+                this.connections.forEach(conn => {
+                    // if connection is open and not returning to sender
+                    if (conn.open && conn.peer !== sender) {
+                        console.log(`Broadcasting handshake to "${conn.peer}":\n${jsonPacket}`);
+                        conn.send(jsonPacket);
+                    }
+                });
+            }
         }
+
     }
 }
 

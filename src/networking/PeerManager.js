@@ -1,4 +1,4 @@
-import { PacketRegistry } from './PacketRegistry.js';
+import { PacketManager } from './PacketManager.js';
 import { HandshakePacket, MessagePacket, AlertPacket } from "../packets/Packets.js";
 
 export default class PeerManager {
@@ -10,11 +10,11 @@ export default class PeerManager {
         localStorage.setItem('peerId', this.peerId);
         this.peer = new Peer(this.peerId);
         this.connections = new Map(); // Store connections as a map
-        this.packetRegistry = new PacketRegistry(); // Initialize packet registry
+        this.packetManager = new PacketManager(); // Initialize packet registry
 
-        this.packetRegistry.registerPacket('handshake', HandshakePacket.handleHandshake.bind(this));
-        this.packetRegistry.registerPacket('message', MessagePacket.handleMessage.bind(this));
-        this.packetRegistry.registerPacket('alert', AlertPacket.handleAlert.bind(this));
+        this.packetManager.registerPacket('handshake', HandshakePacket.handleHandshake.bind(this));
+        this.packetManager.registerPacket('message', MessagePacket.handleMessage.bind(this));
+        this.packetManager.registerPacket('alert', AlertPacket.handleAlert.bind(this));
     }
 
     static getInstance() {
@@ -63,7 +63,7 @@ export default class PeerManager {
     addConnection(connection) {
         this.connections.set(connection.peer, connection);
         connection.on('data', data => {
-            this.packetRegistry.handlePacket(data, connection.peer, this);
+            this.packetManager.handlePacket(data, connection.peer, this);
         });
 
         connection.on('close', () => {
@@ -73,6 +73,7 @@ export default class PeerManager {
     }
 
     sendHandshake(connection) {
+        this.packetManager.sentPackets++;
         const handshakePacket = JSON.stringify(new HandshakePacket(this.peerId), null);
         console.log(`Handshake outbound to "${connection.peer}":\n${handshakePacket}`);
         connection.send(handshakePacket);
@@ -90,8 +91,10 @@ export default class PeerManager {
         const jsonPacket = JSON.stringify(packet, null);
         this.connections.forEach(conn => {
             if (conn.open) {
+                this.packetManager.sentPackets++;
                 conn.send(jsonPacket);
             }
         });
     }
+
 }
