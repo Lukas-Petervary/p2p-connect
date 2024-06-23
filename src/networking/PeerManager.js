@@ -37,7 +37,8 @@ export default class PeerManager {
 
         this.peer.on('connection', connection => {
             console.log('Incoming connection from ' + connection.peer);
-            this.addConnection(connection);
+            if (connection.peerId !== this.peerId)
+                this.addConnection(connection);
         });
     }
 
