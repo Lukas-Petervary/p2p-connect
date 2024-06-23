@@ -23,15 +23,15 @@ class HandshakePacket extends GenericPacket {
 
     static handleHandshake(packet, fromPeerId) {
         const network = PeerManager.getInstance();
-        console.log(`Handshake inbound from "${fromPeerId}"`);
+        console.log(`Handshake inbound from "${fromPeerId}":\n${JSON.stringify(packet)}\nCurrent handshakes: [${handshakeList}]`);
 
         const sender = packet.peerId;
         // if ID is not previously handshaked
         if (!handshakeList.includes(sender)) {
+            handshakeList.push(sender);
             console.log(`Connecting from handshake "${fromPeerId}"`);
             network.connectToPeer(sender);
             network.broadcastPacket(packet);
-            handshakeList.push(sender);
         }
     }
 }

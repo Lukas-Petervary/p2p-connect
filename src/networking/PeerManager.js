@@ -43,12 +43,12 @@ export default class PeerManager {
     }
 
     connectToPeer(peerId) {
-        if (this.connections.has(peerId)) {
-            console.log('Already connected to ' + peerId);
-            return;
-        }
         if (peerId === this.peerId) {
             console.log('Attempted self-connection');
+            return;
+        }
+        else if (this.connections.has(peerId)) {
+            console.log('Already connected to ' + peerId);
             return;
         }
 
@@ -74,7 +74,7 @@ export default class PeerManager {
 
     sendHandshake(connection) {
         const handshakePacket = JSON.stringify(new HandshakePacket(this.peerId), null);
-        console.log(`Handshake outbound to "${connection.peer}"`);
+        console.log(`Handshake outbound to "${connection.peer}":\n${handshakePacket}`);
         connection.send(handshakePacket);
     }
 
