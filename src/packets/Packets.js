@@ -31,7 +31,14 @@ class HandshakePacket extends GenericPacket {
             handshakeList.push(sender);
             console.log(`Connecting from handshake "${fromPeerId}"`);
             network.connectToPeer(sender);
-            network.broadcastPacket(packet);
+
+            const jsonPacket = JSON.stringify(packet);
+            this.connections.forEach(conn => {
+                console.log(`Broadcasting handshake to "${conn.peer}":\n${jsonPacket}`);
+                if (conn.open) {
+                    conn.send(jsonPacket);
+                }
+            });
         }
     }
 }
