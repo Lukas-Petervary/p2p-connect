@@ -20,9 +20,7 @@ document.getElementById('send-btn').addEventListener('click', () => {
 document.getElementById('connect-btn').addEventListener('click', () => {
     const destPeerId = document.getElementById('peer-id-input').value.trim();
     if (destPeerId) {
-        peerManager.connectToPeer(destPeerId, {
-            onData: data => appendMessage(data)
-        });
+        peerManager.connectToPeer(destPeerId);
     } else {
         alert('Enter destination peer ID');
     }
@@ -34,3 +32,7 @@ function appendMessage(message) {
     messageElem.textContent = message;
     messagesDiv.appendChild(messageElem);
 }
+
+document.getElementById('printConnectionsButton').addEventListener('click', () => {
+    PeerManager.printConnections();
+});

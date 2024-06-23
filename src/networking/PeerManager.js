@@ -1,7 +1,11 @@
-import { PacketRegistry, HandshakePacket, MessagePacket, AlertPacket } from './PacketRegistry.js';
+import { PacketRegistry } from './PacketRegistry.js';
+import { HandshakePacket, MessagePacket, AlertPacket } from "../packets/Packets.js";
 
 export default class PeerManager {
+    static instance;
+
     constructor() {
+        PeerManager.instance = this;
         this.peerId = localStorage.getItem('peerId') || this.generatePeerId();
         localStorage.setItem('peerId', this.peerId);
         this.peer = new Peer(this.peerId);
@@ -14,11 +18,11 @@ export default class PeerManager {
     }
 
     static getInstance() {
-        return this;
+        return PeerManager.instance;
     }
 
     static printConnections() {
-        console.log([...this.connections.keys()]);
+        console.log([...PeerManager.instance.connections.keys()]);
     }
 
     generatePeerId() {
@@ -64,12 +68,12 @@ export default class PeerManager {
     }
 
     sendHandshake(connection) {
-        const handshakePacket = JSON.stringify(new HandshakePacket(this.peerId));
+        const handshakePacket = JSON.stringify(new HandshakePacket(this.peerId), null, 2);
         connection.send(handshakePacket);
     }
 
     sendMessage(message) {
-        const messagePacket = JSON.stringify(new MessagePacket(this.peerId+': '+message));
+        const messagePacket = JSON.stringify(new MessagePacket(this.peerId+': '+message), null, 2);
         this.connections.forEach(conn => {
             if (conn.open) {
                 conn.send(messagePacket);
@@ -78,7 +82,7 @@ export default class PeerManager {
     }
 
     sendAlert(message) {
-        const alertPacket = JSON.stringify(new AlertPacket(message));
+        const alertPacket = JSON.stringify(new AlertPacket(message), null, 2);
         this.connections.forEach(conn => {
             if (conn.open) {
                 conn.send(alertPacket);
@@ -87,7 +91,7 @@ export default class PeerManager {
     }
 
     broadcastPacket(packet) {
-        const jsonPacket = JSON.stringify(packet);
+        const jsonPacket = JSON.stringify(packet, null, 2);
         this.connections.forEach(conn => {
             if (conn.open) {
                 conn.send(jsonPacket);
