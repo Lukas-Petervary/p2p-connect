@@ -25,9 +25,9 @@ class HandshakePacket extends GenericPacket {
         console.log('Handshake from peerID: "'+fromPeerId+'"');
 
         // if connection map does not contain received handshake
-        if (!network.connections.has(peerId) && peerId !== network.peerId) {
+        if (!handshakeList.includes(peerId) && peerId !== network.peerId) {
             console.log('Connecting to new peer from handshake: ' + peerId);
-            network.connectToPeer(peerId);
+            //network.connectToPeer(peerId);
             network.broadcastPacket(packet);
         }
 

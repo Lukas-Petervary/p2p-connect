@@ -1,7 +1,6 @@
 import PeerManager from './src/networking/PeerManager.js';
 
 const peerManager = new PeerManager();
-
 peerManager.initialize();
 
 document.getElementById('send-btn').addEventListener('click', () => {
