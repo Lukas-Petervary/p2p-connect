@@ -29,7 +29,7 @@ class HandshakePacket extends GenericPacket {
         // if ID is not previously handshaked
         if (!handshakeList.includes(sender)) {
             handshakeList.push(sender);
-            console.log(`Connecting from handshake "${fromPeerId}\nCurrent handshakes: [${handshakeList}]"`);
+            console.log(`Connecting from handshake "${fromPeerId}"\nCurrent handshakes: [${handshakeList}]\nBroadcast: ${fromPeerId === sender}`);
             network.connectToPeer(sender);
 
             // only propagate handshake if from initial sender
