@@ -9,33 +9,33 @@ class GenericPacket {
 }
 
 class HandshakePacket extends GenericPacket {
-
-
-    constructor(peerId) {
+    constructor(peerId, destination) {
         super('handshake');
         this.peerId = peerId;
+        this.destination = destination;
     }
 
     toJSON() {
         return {
             type: this.type,
-            peerId: this.peerId
+            peerId: this.peerId,
+            destination: this.destination
         };
     }
 
     static handleHandshake(packet, fromPeerId) {
         const network = PeerManager.getInstance();
-        const peerId = packet.peerId;
         console.log('Handshake from peerID: "'+fromPeerId+'"');
 
-        // if connection map does not contain received handshake
-        if (!handshakeList.includes(peerId) && peerId !== network.peerId) {
-            console.log('Connecting to new peer from handshake: ' + peerId);
-            //network.connectToPeer(peerId);
+        const sender = packet.peerId;
+        // if ID is not previously handshaked
+        if (!handshakeList.includes(sender)) {
+            console.log('Connecting to new peer from handshake: ' + fromPeerId);
+            if (packet.destination !== network.peerId)
+                network.connectToPeer(sender);
             network.broadcastPacket(packet);
-            handshakeList.push(peerId);
+            handshakeList.push(sender);
         }
-
     }
 }
 
