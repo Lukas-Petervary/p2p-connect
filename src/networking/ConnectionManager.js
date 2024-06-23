@@ -22,7 +22,11 @@ export default class ConnectionManager {
     }
 
     static printConnections() {
-        console.log(`Connections: [${[...ConnectionManager.instance.connections.keys()]}]`);
+        console.log(`
+        Connections: [${[...ConnectionManager.instance.connections.keys()]}]
+        Packets Sent: ${ConnectionManager.instance.packetManager.sentPackets}
+        Packets Received: ${ConnectionManager.instance.packetManager.receivedPackets}
+        `);
     }
 
     generatePeerId() {

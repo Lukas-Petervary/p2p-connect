@@ -1,4 +1,5 @@
 import ConnectionManager from "../networking/ConnectionManager.js";
+export { HandshakePacket, MessagePacket, AlertPacket };
 
 let handshakeList = [];
 
@@ -26,19 +27,27 @@ class HandshakePacket extends GenericPacket {
         console.log(`Handshake inbound from "${fromPeerId}":\n${JSON.stringify(packet)}`);
 
         const sender = packet.peerId;
-        // if ID is not previously handshaked
         if (!handshakeList.includes(sender)) {
             handshakeList.push(sender);
-            console.log(`Connecting from handshake "${fromPeerId}"\nCurrent handshakes: [${handshakeList}]\nBroadcast: ${fromPeerId === sender}`);
-            network.connectToPeer(sender);
+
+            // if not already connected, establish connection
+            if (!network.connections.has(sender)) {
+                console.log(`Connecting from handshake "${fromPeerId}"`);
+                network.connectToPeer(sender);
+            }
+            else { // if connected, reciprocate handshake
+                console.log(`Already connected to "${fromPeerId}", returning handshake`);
+                network.sendHandshake(network.connections.get(sender));
+            }
+            console.log(`Current handshakes: [${handshakeList}]\nBroadcast: ${fromPeerId === sender}`);
 
             // only propagate handshake if from initial sender
             if (fromPeerId === sender) {
                 const jsonPacket = JSON.stringify(packet);
                 this.connections.forEach(conn => {
+                    console.log(`Broadcasting ? [${conn.peer !== sender}]: handshake to "${conn.peer}":\n${jsonPacket}`);
                     // if connection is open and not returning to sender
                     if (conn.open && conn.peer !== sender) {
-                        console.log(`Broadcasting handshake to "${conn.peer}":\n${jsonPacket}`);
                         conn.send(jsonPacket);
                     }
                 });
@@ -88,5 +97,3 @@ class AlertPacket extends GenericPacket {
         alert(packet.message);
     }
 }
-
-export { HandshakePacket, MessagePacket, AlertPacket };
