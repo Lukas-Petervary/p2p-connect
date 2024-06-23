@@ -1,7 +1,5 @@
 import PeerManager from "../networking/PeerManager.js";
 
-let handshakeList = [];
-
 class GenericPacket {
     constructor(type) {
         this.type = type;
@@ -9,6 +7,8 @@ class GenericPacket {
 }
 
 class HandshakePacket extends GenericPacket {
+    static handshakeList = [];
+
     constructor(peerId) {
         super('handshake');
         this.peerId = peerId;
@@ -31,6 +31,7 @@ class HandshakePacket extends GenericPacket {
             console.log('Connecting to new peer from handshake: ' + peerId);
             //network.connectToPeer(peerId);
             network.broadcastPacket(packet);
+            handshakeList.push(peerId);
         }
 
     }

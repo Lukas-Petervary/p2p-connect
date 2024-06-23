@@ -14,6 +14,12 @@ document.getElementById('send-btn').addEventListener('click', () => {
             appendMessage('Sent: ' + message);
         }
     }
+    if(message === "lukas"){
+        let tf = true;
+        while(tf){
+            console.log("error");
+        }
+    }
 });
 
 document.getElementById('connect-btn').addEventListener('click', () => {
