@@ -22,7 +22,7 @@ export default class PeerManager {
     }
 
     static printConnections() {
-        console.log(`Connections: ${[...PeerManager.instance.connections.keys()]}`);
+        console.log(`Connections: [${[...PeerManager.instance.connections.keys()]}]`);
     }
 
     generatePeerId() {
@@ -38,6 +38,7 @@ export default class PeerManager {
         this.peer.on('connection', connection => {
             console.log('Incoming connection from ' + connection.peer);
             this.addConnection(connection);
+            this.sendHandshake(connection);
         });
     }
 
@@ -47,7 +48,7 @@ export default class PeerManager {
             return;
         }
         if (peerId === this.peerId) {
-            console.log('Attempted to self-connect');
+            console.log('Attempted self-connection');
             return;
         }
 
@@ -66,36 +67,27 @@ export default class PeerManager {
         });
 
         connection.on('close', () => {
-            console.log('Connection with ' + connection.peer + ' closed');
+            console.log(`Connection with "${connection.peer}" closed`);
             this.connections.delete(connection.peer);
         });
     }
 
     sendHandshake(connection) {
-        const handshakePacket = JSON.stringify(new HandshakePacket(this.peerId), null, 2);
+        const handshakePacket = JSON.stringify(new HandshakePacket(this.peerId), null);
+        console.log(`Handshake outbound to "${connection.peer}"`);
         connection.send(handshakePacket);
     }
 
     sendMessage(message) {
-        const messagePacket = JSON.stringify(new MessagePacket(this.peerId+': '+message), null, 2);
-        this.connections.forEach(conn => {
-            if (conn.open) {
-                conn.send(messagePacket);
-            }
-        });
+        this.broadcastPacket(new MessagePacket(this.peerId+': '+message));
     }
 
     sendAlert(message) {
-        const alertPacket = JSON.stringify(new AlertPacket(message), null, 2);
-        this.connections.forEach(conn => {
-            if (conn.open) {
-                conn.send(alertPacket);
-            }
-        });
+        this.broadcastPacket(new AlertPacket(message));
     }
 
     broadcastPacket(packet) {
-        const jsonPacket = JSON.stringify(packet, null, 2);
+        const jsonPacket = JSON.stringify(packet, null);
         this.connections.forEach(conn => {
             if (conn.open) {
                 conn.send(jsonPacket);
