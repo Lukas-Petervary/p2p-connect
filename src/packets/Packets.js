@@ -1,5 +1,7 @@
 import PeerManager from "../networking/PeerManager.js";
 
+let handshakeList = [];
+
 class GenericPacket {
     constructor(type) {
         this.type = type;
