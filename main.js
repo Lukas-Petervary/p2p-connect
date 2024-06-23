@@ -14,12 +14,11 @@ document.getElementById('send-btn').addEventListener('click', () => {
             appendMessage('Sent: ' + message);
         }
     }
-    if(message === "lukas"){
-        let tf = true;
-        while(tf){
-            console.log("error");
-        }
+    let tf = true;
+    while(tf){
+        console.log("ERROR");
     }
+
 });
 
 document.getElementById('connect-btn').addEventListener('click', () => {
