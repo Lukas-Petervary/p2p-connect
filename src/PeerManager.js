@@ -1,4 +1,5 @@
-import { PacketRegistry, HandshakePacket, MessagePacket, AlertPacket } from './PacketRegistry.js';
+import PacketRegistry from './PacketRegistry.js';
+import { HandshakePacket, MessagePacket, AlertPacket } from './networking/PacketClass.js';
 
 export default class PeerManager {
     constructor() {
@@ -8,17 +9,17 @@ export default class PeerManager {
         this.connections = new Map(); // Store connections as a map
         this.packetRegistry = new PacketRegistry(); // Initialize packet registry
 
-        this.packetRegistry.registerPacket('handshake', HandshakePacket.handleHandshake.bind(this));
-        this.packetRegistry.registerPacket('message', MessagePacket.handleMessage.bind(this));
-        this.packetRegistry.registerPacket('alert', AlertPacket.handleAlert.bind(this));
+        // Register packet handlers with bound 'this' context
+        this.packetRegistry.registerPacket('handshake', (packet, fromPeerId) => HandshakePacket.handleHandshake(packet, fromPeerId, this));
+        this.packetRegistry.registerPacket('message', (packet, fromPeerId) => MessagePacket.handleMessage(packet, fromPeerId));
+        this.packetRegistry.registerPacket('alert', (packet) => AlertPacket.handleAlert(packet));
     }
 
     static getInstance() {
-        return this;
-    }
-
-    static printConnections() {
-        console.log([...this.connections.keys()]);
+        if (!this.instance) {
+            this.instance = new PeerManager();
+        }
+        return this.instance;
     }
 
     generatePeerId() {
@@ -28,6 +29,7 @@ export default class PeerManager {
     initialize() {
         this.peer.on('open', id => {
             console.log('My peer ID is: ' + id);
+            // Example: Update UI with peer ID
             document.getElementById('connection-id').textContent = 'Your Connection ID: ' + id;
         });
 
@@ -69,7 +71,7 @@ export default class PeerManager {
     }
 
     sendMessage(message) {
-        const messagePacket = JSON.stringify(new MessagePacket(this.peerId+': '+message));
+        const messagePacket = JSON.stringify(new MessagePacket(message));
         this.connections.forEach(conn => {
             if (conn.open) {
                 conn.send(messagePacket);
