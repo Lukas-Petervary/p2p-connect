@@ -1,4 +1,4 @@
-import PeerManager from "../networking/PeerManager.js";
+import ConnectionManager from "../networking/ConnectionManager.js";
 
 let handshakeList = [];
 
@@ -22,7 +22,7 @@ class HandshakePacket extends GenericPacket {
     }
 
     static handleHandshake(packet, fromPeerId) {
-        const network = PeerManager.getInstance();
+        const network = ConnectionManager.getInstance();
         console.log(`Handshake inbound from "${fromPeerId}":\n${JSON.stringify(packet)}`);
 
         const sender = packet.peerId;

@@ -1,11 +1,11 @@
 import { PacketManager } from './PacketManager.js';
 import { HandshakePacket, MessagePacket, AlertPacket } from "../packets/Packets.js";
 
-export default class PeerManager {
+export default class ConnectionManager {
     static instance;
 
     constructor() {
-        PeerManager.instance = this;
+        ConnectionManager.instance = this;
         this.peerId = localStorage.getItem('peerId') || this.generatePeerId();
         localStorage.setItem('peerId', this.peerId);
         this.peer = new Peer(this.peerId);
@@ -18,11 +18,11 @@ export default class PeerManager {
     }
 
     static getInstance() {
-        return PeerManager.instance;
+        return ConnectionManager.instance;
     }
 
     static printConnections() {
-        console.log(`Connections: [${[...PeerManager.instance.connections.keys()]}]`);
+        console.log(`Connections: [${[...ConnectionManager.instance.connections.keys()]}]`);
     }
 
     generatePeerId() {

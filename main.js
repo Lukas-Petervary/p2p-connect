@@ -1,6 +1,6 @@
-import PeerManager from './src/networking/PeerManager.js';
+import ConnectionManager from './src/networking/ConnectionManager.js';
 
-const peerManager = new PeerManager();
+const peerManager = new ConnectionManager();
 peerManager.initialize();
 
 document.getElementById('send-btn').addEventListener('click', () => {
@@ -33,5 +33,5 @@ function appendMessage(message) {
 }
 
 document.getElementById('printConnectionsButton').addEventListener('click', () => {
-    PeerManager.printConnections();
+    ConnectionManager.printConnections();
 });
