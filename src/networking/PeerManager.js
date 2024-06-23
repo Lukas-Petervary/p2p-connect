@@ -22,7 +22,7 @@ export default class PeerManager {
     }
 
     static printConnections() {
-        console.log([...PeerManager.instance.connections.keys()]);
+        console.log(`Connections: ${[...PeerManager.instance.connections.keys()]}`);
     }
 
     generatePeerId() {
@@ -46,6 +46,10 @@ export default class PeerManager {
             console.log('Already connected to ' + peerId);
             return;
         }
+        if (peerId === this.peerId) {
+            console.log('Attempted to self-connect');
+            return;
+        }
 
         const connection = this.peer.connect(peerId);
         connection.on('open', () => {
@@ -56,8 +60,6 @@ export default class PeerManager {
     }
 
     addConnection(connection) {
-        if (connection.peerId === this.peerId) return;
-
         this.connections.set(connection.peer, connection);
         connection.on('data', data => {
             this.packetRegistry.handlePacket(data, connection.peer, this);
