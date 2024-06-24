@@ -1,11 +1,12 @@
 import ConnectionManager from "../networking/ConnectionManager.js";
-export { HandshakePacket, MessagePacket, AlertPacket };
+export { HandshakePacket, MessagePacket, AlertPacket, PositionPacket };
 
 let handshakeList = [];
 
 class GenericPacket {
     constructor(type) {
         this.type = type;
+        this.peer = ConnectionManager.getInstance().peerId;
     }
 }
 
@@ -18,6 +19,7 @@ class HandshakePacket extends GenericPacket {
     toJSON() {
         return {
             type: this.type,
+            peer: this.peer,
             peerId: this.peerId
         };
     }
@@ -66,6 +68,7 @@ class MessagePacket extends GenericPacket {
     toJSON() {
         return {
             type: this.type,
+            peer: this.peer,
             message: this.message
         };
     }
@@ -89,11 +92,45 @@ class AlertPacket extends GenericPacket {
     toJSON() {
         return {
             type: this.type,
+            peer: this.peer,
             message: this.message
         };
     }
 
     static handleAlert(packet) {
         alert(packet.message);
+    }
+}
+
+class PositionPacket extends GenericPacket {
+    constructor(x, y) {
+        super('position');
+        this.x = x;
+        this.y = y;
+    }
+
+    toJSON() {
+        return {
+            type: this.type,
+            peer: this.peer,
+            x: this.x,
+            y: this.y
+        }
+    }
+
+    static handlePositionPacket(packet) {
+        const peerId = packet.peer, x = packet.x, y = packet.y;
+        let peerDiv = document.getElementById(`peer-${peerId}`);
+
+        if (!peerDiv) {
+            peerDiv = document.createElement('div');
+            peerDiv.id = `peer-${peerId}`;
+            peerDiv.style.position = 'absolute';
+            peerDiv.innerText = peerId;
+            document.body.appendChild(peerDiv);
+        }
+
+        peerDiv.style.left = `${x}px`;
+        peerDiv.style.top = `${y}px`;
     }
 }

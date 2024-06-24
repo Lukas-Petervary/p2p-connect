@@ -1,5 +1,5 @@
 import { PacketManager } from './PacketManager.js';
-import { HandshakePacket, MessagePacket, AlertPacket } from "../packets/Packets.js";
+import { HandshakePacket, MessagePacket, AlertPacket, PositionPacket } from "../packets/Packets.js";
 
 export default class ConnectionManager {
     static instance;
@@ -15,6 +15,7 @@ export default class ConnectionManager {
         this.packetManager.registerPacket('handshake', HandshakePacket.handleHandshake.bind(this));
         this.packetManager.registerPacket('message', MessagePacket.handleMessage.bind(this));
         this.packetManager.registerPacket('alert', AlertPacket.handleAlert.bind(this));
+        this.packetManager.registerPacket('position', PositionPacket.handlePositionPacket.bind(this));
     }
 
     static getInstance() {

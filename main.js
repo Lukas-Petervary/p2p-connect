@@ -1,16 +1,17 @@
 import ConnectionManager from './src/networking/ConnectionManager.js';
+import { PositionPacket } from "./src/packets/Packets.js";
 
-const peerManager = new ConnectionManager();
-peerManager.initialize();
+const connection = new ConnectionManager();
+connection.initialize();
 
 document.getElementById('send-btn').addEventListener('click', () => {
     const message = document.getElementById('message').value.trim();
     document.getElementById('message').value = '';
     if (message) {
         if (message.startsWith('§')) {
-            peerManager.sendAlert(message.substring(1));
+            connection.sendAlert(message.substring(1));
         } else {
-            peerManager.sendMessage(message);
+            connection.sendMessage(message);
             appendMessage('Sent: ' + message);
         }
     }
@@ -19,7 +20,7 @@ document.getElementById('send-btn').addEventListener('click', () => {
 document.getElementById('connect-btn').addEventListener('click', () => {
     const destPeerId = document.getElementById('peer-id-input').value.trim();
     if (destPeerId) {
-        peerManager.connectToPeer(destPeerId);
+        connection.connectToPeer(destPeerId);
     } else {
         alert('Enter destination peer ID');
     }
@@ -34,4 +35,8 @@ function appendMessage(message) {
 
 document.getElementById('printConnectionsButton').addEventListener('click', () => {
     ConnectionManager.printConnections();
+});
+
+document.addEventListener('mousemove', event => {
+    connection.broadcastPacket(new PositionPacket(event.x, event.y))
 });
