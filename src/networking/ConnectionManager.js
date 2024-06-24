@@ -74,6 +74,7 @@ export default class ConnectionManager {
 
         connection.on('close', () => {
             console.log(`Connection with "${connection.peer}" closed`);
+            document.getElementById(`peer-${connection.peer}`).remove();
             this.connections.delete(connection.peer);
         });
     }
