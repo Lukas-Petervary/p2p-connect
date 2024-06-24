@@ -1,6 +1,7 @@
 import { PacketManager } from './PacketManager.js';
 import { HandshakePacket, MessagePacket, AlertPacket, PositionPacket } from "./Packets.js";
 
+
 export default class ConnectionManager {
     static instance;
 
