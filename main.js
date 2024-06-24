@@ -33,10 +33,6 @@ function appendMessage(message) {
     messagesDiv.appendChild(messageElem);
 }
 
-document.getElementById('printConnectionsButton').addEventListener('click', () => {
-    ConnectionManager.printConnections();
-});
-
 document.addEventListener('mousemove', event => {
     connection.broadcastPacket(new PositionPacket(event.x, event.y))
 });

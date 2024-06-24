@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    background: linear-gradient(
+            130deg,
+            #0A1024FF 0% 33%,
+            #6200EAFF 80%,
+            #EC407AFF 90%,
+            #FDD835FF 100%
+    );
+    color: white;
+    font-family: "Exo 2", sans-serif;
+    height: 100vh;
+}
+#top {
+    display: flex;
+    position: relative;
+    top: 10px;
+    justify-content: center;
+    transition: letter-spacing 0.5s ease;
+    letter-spacing: 5px;
+    font-size: 30px;
+    font-family: "Futura", sans-serif;
+    text-shadow: 0 0 7px #fff;
+    text-align: center;
+}
+#top:hover {
+    letter-spacing: 15px;
+}
+.custom-line {
+    width: 250px;
+    height: 1px;
+    position: absolute;
+    top: 70px;
+
+    background-color: #fff;
+    box-shadow: 0 0 10px #ffffffff;
+}
+
+#connection-widgets {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    top: 30px;
+    margin: 10px;
+
+}
+
+#messages {
+    position: relative;
+    top: 30px;
+    width: 80%;
+    height: 300px;
+    margin: 20px auto;
+    overflow-y: scroll;
+    background-color: #414141;
+    box-shadow: 2px 3px 8px rgb(97, 97, 97);
+    border-radius: 20px;
+    text-align: left;
+    text-indent: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 17px;
+}
+
+#centered-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: 50px;
+}
+#message-widgets {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+
+    background: #0A1024FF;
+    border-radius: 20px;
+}
+.padded {
+    margin: 10px;
+}
+textarea {
+    background-color: #c4c4c4;
+    border-radius: 5px;
+    text-indent: 10px;
+    text-align: left;
+}
+.button {
+    background-color: rgb(0, 0, 80);
+    color: white;
+    width: 60px;
+    height: 40px;
+    position: inherit;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px rgb(40, 27, 99);
+}
+#send-btn:hover{
+    cursor: pointer;
+    background-color: rgb(0, 0, 114);
+}
