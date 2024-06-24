@@ -1,5 +1,5 @@
 import ConnectionManager from './src/networking/ConnectionManager.js';
-import { PositionPacket } from "./src/packets/Packets.js";
+import { PositionPacket } from "./src/networking/Packets.js";
 
 const connection = new ConnectionManager();
 connection.initialize();

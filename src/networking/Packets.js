@@ -1,4 +1,4 @@
-import ConnectionManager from "../networking/ConnectionManager.js";
+import ConnectionManager from "./ConnectionManager.js";
 export { HandshakePacket, MessagePacket, AlertPacket, PositionPacket };
 
 let handshakeList = [];
