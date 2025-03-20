@@ -6,13 +6,7 @@
     padding: 0;
 }
 body {
-    background: linear-gradient(
-            130deg,
-            #0A1024FF 0% 33%,
-            #6200EAFF 80%,
-            #EC407AFF 90%,
-            #FDD835FF 100%
-    );
+    background: linear-gradient(#abc4ff 0%, #edf2fb 100%)
     color: white;
     font-family: "Comfortaa", sans-serif;
     height: 100vh;
